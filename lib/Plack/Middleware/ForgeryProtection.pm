@@ -31,11 +31,24 @@ Plack::Middleware::ForgeryProtection - Ronco Spray-On CSRF protection
 
 =head1 SYNOPSIS
 
-  use Plack::Middleware::ForgeryProtection;
+Set it:
+
+  enable 'Session';
+  enable 'ForgeryProtection';
+
+and forget it.
 
 =head1 DESCRIPTION
 
-Plack::Middleware::ForgeryProtection is amazing
+Plack::Middleware::ForgeryProtection creates a per-session token to prevent CSRF. 
+You must include the _csrf_token session key in POST/PUT/DELETE requests, by way of
+embedding a hidden input:
+
+  <form method="post" ...>
+     <input type="hidden" name="_csrf_token" value="[% csrf_token %]">
+  ...
+  
+or other methods (JS var, &c).
 
 =head1 AUTHOR
 
