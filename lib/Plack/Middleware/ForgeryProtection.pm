@@ -2,16 +2,16 @@ package Plack::Middleware::ForgeryProtection;
 use strict;
 use warnings;
 use parent qw(Plack::Middleware);
-use Crypt::Random::Source qw(get_strong);
+use Crypt::Random::Source qw(get);
 use MIME::Base64;
 use Plack::Request;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub call {
     my ($self, $env) = @_;
 
-    $env->{'psgix.session'}{'_csrf_token'} ||= encode_base64(get_strong(32), '');
+    $env->{'psgix.session'}{'_csrf_token'} ||= encode_base64(get(32), '');
 
     if ($env->{REQUEST_METHOD} ne 'GET') {
         my $req = Plack::Request->new($env);
