@@ -4,6 +4,7 @@ use Plack::Test;
 use Plack::Builder;
 use Plack::Request;
 use HTTP::Request::Common;
+use HTTP::Cookies;
 
 my $app = sub { 
     my $env = shift;
@@ -14,7 +15,7 @@ my $app = sub {
     }   
 };   
 
-builder {
+$app = builder {
     enable 'Session';
     enable 'ForgeryProtection';
     $app;
@@ -29,11 +30,15 @@ test_psgi app => $app, client => sub {
     $res = $cb->(POST '/', {'_csrf_token' => 'bad token'});
     is $res->code, 403;
 
+    my $jar = HTTP::Cookies->new;
+
     $res = $cb->(GET '/');
+    $jar->extract_cookies($res);
     my $token = $res->content;
     
-    $res = $cb->(POST '/', {'_csrf_token' => $token});
+    my $req = POST '/', {'_csrf_token' => $token};
+    $jar->add_cookie_header($req);
+    $res = $cb->($req);
     is $res->code, 200; 
 };
-        
 done_testing;
