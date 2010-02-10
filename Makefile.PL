@@ -2,7 +2,7 @@ use inc::Module::Install;
 name 'Plack-Middleware-ForgeryProtection';
 all_from 'lib/Plack/Middleware/ForgeryProtection.pm';
 
-# requires '';
+requires 'Crypt::Random::Source';
 
 tests 't/*.t';
 author_tests 'xt';
