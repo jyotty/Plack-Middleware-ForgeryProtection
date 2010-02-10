@@ -7,12 +7,9 @@ use HTTP::Request::Common;
 
 my $app = sub { 
     my $env = shift;
-    $env->{'psgix.session'}{'_csrf_token'} = 'PCsTPTNydJ9tFJanaR/H6UYmqJ9PETC040Jb8R0V+O0=';
     if ($env->{REQUEST_METHOD} eq 'GET') {
-        return [ 200, [ 'Content-Type' => 'text/html' ], 
-            [ $env->{'psgix.session'}{'_csrf_token'} ] ];
+        return [ 200, [ 'Content-Type' => 'text/html' ], [ $env->{'psgix.session'}{'_csrf_token'} ] ];
     } else {
-        my $req = Plack::Request->new($env);
         return [ 200, [ 'Content-Type' => 'text/html' ], [ 'Hello' ] ];
     }   
 };   
