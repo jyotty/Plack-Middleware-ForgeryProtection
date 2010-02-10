@@ -11,11 +11,13 @@ our $VERSION = '0.02';
 sub call {
     my ($self, $env) = @_;
 
-    $env->{'psgix.session'}{'_csrf_token'} ||= encode_base64(get(32), '');
+    my $session = $env->{'psgix.session'};
+
+    $session->{'_csrf_token'} ||= encode_base64(get(32), '');
 
     if ($env->{REQUEST_METHOD} ne 'GET') {
         my $req = Plack::Request->new($env);
-        if ($req->body_parameters->{'_csrf_token'} ne $env->{'psgix.session'}{'_csrf_token'}) {
+        if ($req->body_parameters->{'_csrf_token'} ne $session->{'_csrf_token'}) {
             return [ 403, [ 'Content-Type' => 'text/html; charset=utf-8'], [ '403 Forbidden' ] ];
         }
     }
@@ -41,14 +43,14 @@ and forget it.
 =head1 DESCRIPTION
 
 Plack::Middleware::ForgeryProtection creates a per-session token to prevent CSRF. 
-You must include the _csrf_token session key in POST/PUT/DELETE requests, by way of
-embedding a hidden input:
+Checks the _csrf_token session key against the POST/PUT/DELETE _csrf_token HTTP body
+parameter. You can manually insert the token into your forms:
 
   <form method="post" ...>
-     <input type="hidden" name="_csrf_token" value="[% csrf_token %]">
+     <input type="hidden" name="_csrf_token" value="[% session._csrf_token %]">
   ...
   
-or other methods (JS var, &c).
+or use JavaScript-based methods.
 
 =head1 AUTHOR
 
