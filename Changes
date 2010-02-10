@@ -1,0 +1,4 @@
+Revision history for Perl extension Plack::Middleware::ForgeryProtection
+
+0.01    Wed Feb 10 01:19:04 2010
+        - original version
